@@ -113,5 +113,12 @@
 	</dependencies>
 	<build>
 		<finalName>StarwarsService</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>4.0.3</version>
+			</plugin>
+		</plugins>
 	</build>
 </project>

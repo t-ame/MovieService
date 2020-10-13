@@ -1,4 +1,4 @@
-package com.starwars.t;
+package com.starwars.api;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
