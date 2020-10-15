@@ -1,88 +1,184 @@
 # Starwars Movie Service
 
-The Base URL for this application is <https://www.google.com>
+A web service to list the names of Star Wars movies along with their opening crawls and character. Also, anonymous comments can also be added and retrieved.
+
+The **Base URL** for this application is <https://www.google.com>
 
 <br>
 
-**Content List**
+#### Content List
 
+- [Response Format Info](#response-format-info)
 - [Movies](#movies)
+- [Characters](#characters)
+- [Comments](#comments)
 
 <br>
 
-##### Movies
+#### Response Format Info
 
->Create new Movie
+**ERROR**
 
->**POST** */api/films/* 
+Status Code: **500** 
 
+>Response Body: 
 
 ``` json
 {
-    "count": 1,
-    "next": null,
-    "previous": null,
-    "results": [
+    "error_message": "An error occured. Please try again later."
+}
+```
+
+**SUCCESS**
+
+Status Code: **200** 
+
+>Response Body: As specified for each endpoint below
+
+<br>
+
+#### Movies
+
+**Fetch list of movies with data**
+
+>**GET** */starwars/movies* 
+
+>Response Body: 
+
+``` json
+{
+    "result": [
         {
             "title": "A New Hope",
-            "episode_id": 4,
             "opening_crawl": "It is a period of civil war.\r\nRebel spaceships, striking\r\nfrom a hidden base, have won\r\ntheir first victory against\r\nthe evil Galactic Empire.\r\n\r\nDuring the battle, Rebel\r\nspies managed to steal secret\r\nplans to the Empire's\r\nultimate weapon, the DEATH\r\nSTAR, an armored space\r\nstation with enough power\r\nto destroy an entire planet.\r\n\r\nPursued by the Empire's\r\nsinister agents, Princess\r\nLeia races home aboard her\r\nstarship, custodian of the\r\nstolen plans that can save her\r\npeople and restore\r\nfreedom to the galaxy....",
-            "director": "George Lucas",
-            "producer": "Gary Kurtz, Rick McCallum",
             "release_date": "1977-05-25",
-            "characters": [
-                "http://swapi.dev/api/people/1/",
-                "http://swapi.dev/api/people/2/",
-                "http://swapi.dev/api/people/3/",
-                "http://swapi.dev/api/people/4/",
-                "http://swapi.dev/api/people/5/",
-                "http://swapi.dev/api/people/6/",
-                "http://swapi.dev/api/people/7/",
-                "http://swapi.dev/api/people/8/",
-                "http://swapi.dev/api/people/9/",
-                "http://swapi.dev/api/people/10/",
-                "http://swapi.dev/api/people/12/",
-                "http://swapi.dev/api/people/13/",
-                "http://swapi.dev/api/people/14/",
-                "http://swapi.dev/api/people/15/",
-                "http://swapi.dev/api/people/16/",
-                "http://swapi.dev/api/people/18/",
-                "http://swapi.dev/api/people/19/",
-                "http://swapi.dev/api/people/81/"
-            ],
-            "planets": [
-                "http://swapi.dev/api/planets/1/",
-                "http://swapi.dev/api/planets/2/",
-                "http://swapi.dev/api/planets/3/"
-            ],
-            "starships": [
-                "http://swapi.dev/api/starships/2/",
-                "http://swapi.dev/api/starships/3/",
-                "http://swapi.dev/api/starships/5/",
-                "http://swapi.dev/api/starships/9/",
-                "http://swapi.dev/api/starships/10/",
-                "http://swapi.dev/api/starships/11/",
-                "http://swapi.dev/api/starships/12/",
-                "http://swapi.dev/api/starships/13/"
-            ],
-            "vehicles": [
-                "http://swapi.dev/api/vehicles/4/",
-                "http://swapi.dev/api/vehicles/6/",
-                "http://swapi.dev/api/vehicles/7/",
-                "http://swapi.dev/api/vehicles/8/"
-            ],
-            "species": [
-                "http://swapi.dev/api/species/1/",
-                "http://swapi.dev/api/species/2/",
-                "http://swapi.dev/api/species/3/",
-                "http://swapi.dev/api/species/4/",
-                "http://swapi.dev/api/species/5/"
-            ],
-            "created": "2014-12-10T14:23:31.880000Z",
-            "edited": "2014-12-20T19:49:45.256000Z",
-            "url": "http://swapi.dev/api/films/1/"
+            "commentCount": 0,
+            "comments": "/movies/4/comments",
+            "charactersURL": "/movies/4/characters"
         }
-    ]
+    ],
+    "count": 1,
+    "self": "{baseURL}/starwars/movies"
+}
+```
+
+<br>
+
+#### Characters
+
+**Fetch list of characters in a movie**
+
+>**GET** */starwars/movies/{episodeID}/characters* 
+
+>Query Parameters:
+
+>- **filtergender**: Filter by gender. e.g 
+
+>>`male, female, hermaphrodite, etc.`
+
+>- **sortfield**: Sort by field. Options include; 
+
+>>`name, gender, height`
+
+>- **sortdirection**: Sorting direction. Options include; 
+
+>>`asc, desc`
+
+>Response Body: 
+
+``` json
+{
+    "result": [
+        {
+            "name": "Wilhuff Tarkin",
+            "height": 180,
+            "mass": "unknown",
+            "hair_color": "auburn, grey",
+            "skin_color": "fair",
+            "eye_color": "blue",
+            "birth_year": "64BBY",
+            "gender": "male",
+            "homeworld": "http://swapi.dev/api/planets/21/"
+        }
+    ],
+    "totalCount": 18,
+    "totalMatch": 1,
+    "totalheighCm": 3066,
+    "totalheighFt": "100",
+    "totalheighIn": "7.09",
+    "self": "{baseURL}/starwars/movies/4/characters"
+}
+```
+
+<br>
+
+#### Comments
+
+**Add New Comment to a movie**
+
+>**POST** */starwars/movies/{episodeID}/comments* 
+
+>Request Body: 
+
+``` json
+{
+	"comment": "A comment that is not more than 500 words"
+}
+```
+
+>Response Body: 
+
+``` json
+{
+    "comment": {
+        "commentId": 3,
+        "movieId": 4,
+        "comment": "A comment that is not more than 500 words",
+        "ipAddress": "0:0:0:0:0:0:0:1"
+    },
+    "self": "{baseURL}/starwars/movies/4/comments/3"
+}
+```
+
+**Fetch list of all anonymous comments made on a movie**
+
+>**GET** */starwars/movies/{episodeID}/comments* 
+
+>Response Body: 
+
+``` json
+{
+    "result": [
+        {
+            "commentId": 2,
+            "movieId": 4,
+            "comment": "Another test comment",
+            "date_time": "2020-10-15 02:13:25",
+            "ipAddress": "0:0:0:0:0:0:0:1",
+            "self": "{baseURL}/starwars/movies/4/comments/2"
+        }
+    ],
+    "count": 1,
+    "self": "{baseURL}/starwars/movies/4/comments"
+}
+```
+
+**Fetch a comment by comment ID**
+
+>**GET** */starwars/movies/{episodeID}/comments/{commentID}* 
+
+>Response Body: 
+
+``` json
+{
+    "comment": {
+        "commentId": 1,
+        "movieId": 4,
+        "comment": "A test comment",
+        "date_time": "2020-10-15 02:00:49",
+        "ipAddress": "0:0:0:0:0:0:0:1"
+    },
+    "self": "{baseURL}/starwars/movies/4/comments/1"
 }
 ```
 
