@@ -29,6 +29,7 @@ public class CharacterServiceImpl implements CharacterService {
 
 	@Override
 	public List<Character> getCharacters(int movieId) throws AppException {
+
 		Movie movie = movieService.fetchMovieById(movieId);
 
 		List<String> charactersUrl = new ArrayList<>();
@@ -66,6 +67,7 @@ public class CharacterServiceImpl implements CharacterService {
 	}
 
 	private Character fetchCharacter(String url) throws AppException {
+
 		Character character = null;
 
 		HttpResponse response;
@@ -95,21 +97,34 @@ public class CharacterServiceImpl implements CharacterService {
 
 	private List<Character> filterAndSort(List<Character> characters, String filterGender, SortField sortField,
 			SortDirection sortDirection) {
+
 		if (filterGender != null && !filterGender.trim().equals("")) {
-			characters = characters.stream().filter(x -> x.getGender() != null && x.getGender().equals(filterGender))
+			characters = characters.stream().filter(x -> x.getGender() != null && x.getGender().equalsIgnoreCase(filterGender))
 					.collect(Collectors.toList());
 		}
 		Comparator<Character> c;
-		switch (sortField) {
-		case GENDER:
-			c = (a, b) -> (sortDirection == SortDirection.ASC) ? a.getGender().compareTo(b.getGender())
-					: b.getGender().compareTo(a.getGender());
-		case HEIGHT:
-			c = (a, b) -> (sortDirection == SortDirection.ASC) ? a.getHeight().compareTo(b.getHeight())
-					: b.getHeight().compareTo(a.getHeight());
+		switch (sortField.getName()) {
+		case "gender":
+			if (sortDirection == SortDirection.ASC) {
+				c = (a, b) -> a.getGender().compareTo(b.getGender());
+			} else {
+				c = (a, b) -> b.getGender().compareTo(a.getGender());
+			}
+			break;
+		case "height":
+			if (sortDirection == SortDirection.ASC) {
+				c = (a, b) -> a.getHeight().compareTo(b.getHeight());
+			} else {
+				c = (a, b) -> b.getHeight().compareTo(a.getHeight());
+			}
+			break;
 		default:
-			c = (a, b) -> (sortDirection == SortDirection.ASC) ? a.getName().compareTo(b.getName())
-					: b.getName().compareTo(a.getName());
+			if (sortDirection == SortDirection.ASC) {
+				c = (a, b) -> a.getName().compareTo(b.getName());
+			} else {
+				c = (a, b) -> b.getName().compareTo(a.getName());
+			}
+			break;
 		}
 		characters.sort(c);
 		return characters;
@@ -118,9 +133,6 @@ public class CharacterServiceImpl implements CharacterService {
 	@Override
 	public JsonObject getCharacters(int movieId, String filterGender, String sortField, String sortDirection)
 			throws AppException {
-
-		System.out.println("PARAMETERS: " + filterGender + ", " + SortField.getField(sortField) + ", "
-				+ SortDirection.getDirection(sortDirection) + ", ");
 
 		JsonObject obj = new JsonObject();
 		GsonBuilder builder = new GsonBuilder();
