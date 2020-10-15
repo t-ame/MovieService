@@ -4,7 +4,7 @@ A web service to list the names of Star Wars movies along with their opening cra
 
 <br>
 
-**Base URL**: <br><br> <http://ec2-52-14-66-3.us-east-2.compute.amazonaws.com:8080/Wars>
+**Base URL**: <br><br> <http://ec2-52-14-66-3.us-east-2.compute.amazonaws.com:8080/starwars>
 
 <br>
 
