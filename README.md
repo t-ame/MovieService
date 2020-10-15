@@ -2,7 +2,9 @@
 
 A web service to list the names of Star Wars movies along with their opening crawls and character. Also, anonymous comments can also be added and retrieved.
 
-The **Base URL** for this application is <https://www.google.com>
+<br>
+
+**Base URL**: <br><br> <http://ec2-52-14-66-3.us-east-2.compute.amazonaws.com:8080/starwars>
 
 <br>
 
@@ -41,7 +43,7 @@ Status Code: **200**
 
 **Fetch list of movies with data**
 
->**GET** */starwars/movies* 
+>**GET** */movies* 
 
 >Response Body: 
 
@@ -50,15 +52,16 @@ Status Code: **200**
     "result": [
         {
             "title": "A New Hope",
+            "episode_id": 4,
             "opening_crawl": "It is a period of civil war.\r\nRebel spaceships, striking\r\nfrom a hidden base, have won\r\ntheir first victory against\r\nthe evil Galactic Empire.\r\n\r\nDuring the battle, Rebel\r\nspies managed to steal secret\r\nplans to the Empire's\r\nultimate weapon, the DEATH\r\nSTAR, an armored space\r\nstation with enough power\r\nto destroy an entire planet.\r\n\r\nPursued by the Empire's\r\nsinister agents, Princess\r\nLeia races home aboard her\r\nstarship, custodian of the\r\nstolen plans that can save her\r\npeople and restore\r\nfreedom to the galaxy....",
             "release_date": "1977-05-25",
-            "commentCount": 0,
+            "commentCount": 3,
             "comments": "/movies/4/comments",
             "charactersURL": "/movies/4/characters"
         }
     ],
     "count": 1,
-    "self": "{baseURL}/starwars/movies"
+    "self": "{baseURL}/movies"
 }
 ```
 
@@ -68,7 +71,7 @@ Status Code: **200**
 
 **Fetch list of characters in a movie**
 
->**GET** */starwars/movies/{episodeID}/characters* 
+>**GET** */movies/{episodeID}/characters* 
 
 >Query Parameters:
 
@@ -106,7 +109,7 @@ Status Code: **200**
     "totalheighCm": 3066,
     "totalheighFt": "100",
     "totalheighIn": "7.09",
-    "self": "{baseURL}/starwars/movies/4/characters"
+    "self": "{baseURL}/movies/4/characters"
 }
 ```
 
@@ -116,7 +119,7 @@ Status Code: **200**
 
 **Add New Comment to a movie**
 
->**POST** */starwars/movies/{episodeID}/comments* 
+>**POST** */movies/{episodeID}/comments* 
 
 >Request Body: 
 
@@ -136,13 +139,13 @@ Status Code: **200**
         "comment": "A comment that is not more than 500 words",
         "ipAddress": "0:0:0:0:0:0:0:1"
     },
-    "self": "{baseURL}/starwars/movies/4/comments/3"
+    "self": "{baseURL}/movies/4/comments/3"
 }
 ```
 
 **Fetch list of all anonymous comments made on a movie**
 
->**GET** */starwars/movies/{episodeID}/comments* 
+>**GET** */movies/{episodeID}/comments* 
 
 >Response Body: 
 
@@ -155,17 +158,17 @@ Status Code: **200**
             "comment": "Another test comment",
             "date_time": "2020-10-15 02:13:25",
             "ipAddress": "0:0:0:0:0:0:0:1",
-            "self": "{baseURL}/starwars/movies/4/comments/2"
+            "self": "{baseURL}/movies/4/comments/2"
         }
     ],
     "count": 1,
-    "self": "{baseURL}/starwars/movies/4/comments"
+    "self": "{baseURL}/movies/4/comments"
 }
 ```
 
 **Fetch a comment by comment ID**
 
->**GET** */starwars/movies/{episodeID}/comments/{commentID}* 
+>**GET** */movies/{episodeID}/comments/{commentID}* 
 
 >Response Body: 
 
@@ -178,7 +181,7 @@ Status Code: **200**
         "date_time": "2020-10-15 02:00:49",
         "ipAddress": "0:0:0:0:0:0:0:1"
     },
-    "self": "{baseURL}/starwars/movies/4/comments/1"
+    "self": "{baseURL}/movies/4/comments/1"
 }
 ```
 
