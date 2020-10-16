@@ -27,7 +27,6 @@ public class CharacterServiceImpl implements CharacterService {
 
 	MovieService movieService = new MovieServiceImpl();
 
-	@Override
 	public List<Character> getCharacters(int movieId) throws AppException {
 
 		Movie movie = movieService.fetchMovieById(movieId);
@@ -55,9 +54,14 @@ public class CharacterServiceImpl implements CharacterService {
 			JsonObject responseJson = gson.fromJson(responseData, JsonObject.class);
 			charactersUrl = gson.fromJson(responseJson.get("characters"), new TypeToken<List<String>>() {
 			}.getType());
+			
+			List<Thread> threads = new ArrayList<>();
 
 			for (String url : charactersUrl) {
-				characters.add(fetchCharacter(url));
+				threads.add(fetchCharacter(characters, url));
+			}
+			for(Thread thread : threads) {
+				thread.join();
 			}
 		} catch (Exception e) {
 			throw new AppException("Starwars movie service is unavailable. Please try again later.", e);
@@ -66,33 +70,42 @@ public class CharacterServiceImpl implements CharacterService {
 		return characters;
 	}
 
-	private Character fetchCharacter(String url) throws AppException {
 
-		Character character = null;
+	private Thread fetchCharacter(List<Character> characters, String url) throws AppException {
 
-		HttpResponse response;
-		CloseableHttpClient client = HttpClientBuilder.create().build();
-		StringBuffer result = new StringBuffer();
-		HttpGet get = new HttpGet(url);
-		try {
-			response = client.execute(get);
-			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-			String line = "";
-			while ((line = rd.readLine()) != null) {
-				result.append(line);
+		Runnable runable = new Runnable() {
+			public void run() {
+				HttpResponse response;
+				CloseableHttpClient client = HttpClientBuilder.create().build();
+				StringBuffer result = new StringBuffer();
+				HttpGet get = new HttpGet(url);
+				try {
+					response = client.execute(get);
+					BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+					String line = "";
+					while ((line = rd.readLine()) != null) {
+						result.append(line);
+					}
+					rd.close();
+
+					String responseData = result.toString();
+
+					Gson gson = new Gson();
+					
+					Character character = gson.fromJson(responseData, Character.class);
+
+					synchronized (characters) {
+						characters.add(character);
+					}
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
 			}
-			rd.close();
-
-			String responseData = result.toString();
-
-			Gson gson = new Gson();
-
-			character = gson.fromJson(responseData, Character.class);
-
-		} catch (Exception e1) {
-			throw new AppException("Starwars movie service is unavailable. Please try again later.", e1);
-		}
-		return character;
+		};
+		Thread thread = new Thread(runable);
+		thread.start();
+		
+		return thread;
 	}
 
 	private List<Character> filterAndSort(List<Character> characters, String filterGender, SortField sortField,
