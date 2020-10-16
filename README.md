@@ -10,16 +10,18 @@ A web service to list the names of Star Wars movies along with their opening cra
 
 #### Content List
 
-- [Response Format Info](#response-format-info)
+- [Basic Information](#basic-information)
 - [Movies](#movies)
 - [Characters](#characters)
 - [Comments](#comments)
 
 <br>
 
-#### Response Format Info
+#### Basic Information
 
-**ERROR**
+Request and Response bodies are in JSON format
+
+**ERROR Response**
 
 Status Code: **500** 
 
@@ -31,7 +33,7 @@ Status Code: **500**
 }
 ```
 
-**SUCCESS**
+**SUCCESS Response**
 
 Status Code: **200** 
 
@@ -45,7 +47,21 @@ Status Code: **200**
 
 >**GET** */movies* 
 
->Response Body: 
+Response Body fields:
+- **result**: A list containing the movie objects;
+
+>- **title**: The title of this movie
+>- **episode_id**: The episode id of this movie
+>- **opening_crawl**: The opening crawl of this movie
+>- **release_date**: The data the movie was released
+>- **commentCount**: The total count of anonymous comments made on this movie
+>- **comments**: The URL to fetch the comments for this movie
+>- **charactersURL**: The URL to fetch the characters for this movie
+
+- **count**: The total count of all the movies
+- **self**: The URL to fetch all movies
+
+>Response Body Sample: 
 
 ``` json
 {
@@ -73,21 +89,54 @@ Status Code: **200**
 
 >**GET** */movies/{episodeID}/characters* 
 
+You can Filter by gender and sort by different parameters as described below.
+<br>
+If no specific sorting parameters are provided, it sorts by **Name** in **Ascending** order by default
+
 >Query Parameters:
 
->- **filtergender**: Filter by gender. e.g 
+>- **filtergender**: Filter by gender. Options are: 
 
->>`male, female, hermaphrodite, etc.`
+>>`male, female, hermaphrodite`
 
->- **sortfield**: Sort by field. Options include; 
+>- **sortfield**: Sort by field. Options are; 
 
 >>`name, gender, height`
 
->- **sortdirection**: Sorting direction. Options include; 
+>- **sortdirection**: Sorting direction. Options are; 
 
 >>`asc, desc`
 
->Response Body: 
+
+Filtering by gender:
+
+>**GET** */movies/{episodeID}/characters?filtergender=male* 
+
+Sorting by a field (default field: **name**, default direction: **asc**):
+
+>**GET** */movies/{episodeID}/characters?sortfield=height&sortdirection=desc*
+
+Response Body fields:
+- **result**: A list containing the character objects;
+
+>- **name**: The name of this character
+>- **height**: The height of this character
+>- **mass**: The mass of this character
+>- **hair_color**: The hair color of this character
+>- **skin_color**: The skin color of this character
+>- **eye_color**: The eye color of this character
+>- **birth_year**: The birth year of this character
+>- **gender**: The gender of this character
+>- **homeworld**: The URL to fetch the data of the home world of this character
+
+- **totalCount**: The total count of all characters in the specified movie
+- **totalMatch**: The total count of all character that match the result from filtering
+- **totalheighCm**: The total height in centimeters of all characters that are returned by the query
+- **totalheighFt**: The feet part of the total height converted from centimeter to feet and inches
+- **totalheighIn**: The inch part of the total height converted from centimeter to feet and inches
+- **self**: The URL to fetch all characters 
+
+>Response Body Sample: 
 
 ``` json
 {
@@ -117,11 +166,15 @@ Status Code: **200**
 
 #### Comments
 
-**Add New Comment to a movie**
+**Add New Anonymous Comment to a movie**
+<br>A comment must not exceed 500 characters.
 
 >**POST** */movies/{episodeID}/comments* 
 
->Request Body: 
+Request Body fields:
+- **comment**: A comment that is not more than 500 words
+
+>Request Body Sample: 
 
 ``` json
 {
@@ -129,7 +182,17 @@ Status Code: **200**
 }
 ```
 
->Response Body: 
+Response Body fields:
+- **comment**: An object containing the details of the inserted comment;
+
+>- **commentId**: The ID generated for the inserted comment
+>- **movieId**: The episode ID of the movie for which the comment was inserted
+>- **comment**: The inserted comment
+>- **ipAddress**: The IP address of the person that made the comment
+
+- **self**: The URL to fetch this comment
+
+>Response Body Sample: 
 
 ``` json
 {
@@ -142,12 +205,26 @@ Status Code: **200**
     "self": "{baseURL}/movies/4/comments/3"
 }
 ```
+<br>
 
 **Fetch list of all anonymous comments made on a movie**
 
 >**GET** */movies/{episodeID}/comments* 
 
->Response Body: 
+Response Body fields:
+- **result**: A list containing the comment objects
+
+>- **commentId**: The ID for the comment
+>- **movieId**: The episode ID of the movie for which the comment was inserted
+>- **comment**: The comment
+>- **date_time**: The date and time this comment was created
+>- **ipAddress**: The IP address of the person that made the comment
+>- **self**: The URL to fetch this particular comment
+
+- **count**: The total count of all the comments under the specified movie
+- **self**: The URL to fetch all comments in the specified movie
+
+>Response Body Sample: 
 
 ``` json
 {
@@ -165,12 +242,25 @@ Status Code: **200**
     "self": "{baseURL}/movies/4/comments"
 }
 ```
+<br>
 
 **Fetch a comment by comment ID**
 
 >**GET** */movies/{episodeID}/comments/{commentID}* 
 
->Response Body: 
+Response Body fields:
+- **comment**: An object containing the details of the comment;
+
+>- **commentId**: The ID for the comment
+>- **movieId**: The episode ID of the movie for which the comment was inserted
+>- **comment**: The inserted comment
+>- **date_time**: The date and time this comment was created
+>- **ipAddress**: The IP address of the person that made the comment
+>- **self**: The URL to fetch this particular comment
+
+- **self**: The URL to fetch this comment
+
+>Response Body Sample: 
 
 ``` json
 {
